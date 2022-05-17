@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Generator tool: https://www.prismabuilder.io/
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id     String   @id @unique @default(cuid())
+  name   String
+  car    Car[]
+  Engine Engine[]
+}
+
+model Car {
+  id       String  @id @unique @default(cuid())
+  name     String
+  engine   Engine? @relation(fields: [engineId], references: [id])
+  Person   Person? @relation(fields: [personId], references: [id])
+  personId String?
+  engineId String?
+}
+
+model Engine {
+  id         String  @id @unique @default(cuid())
+  name       String
+  horsepower Int
+  inventor   Person? @relation(fields: [personId], references: [id])
+  Car        Car[]
+  personId   String?
+}
+
+//
+// Example referential action
+//
+// model Post {
+//   id     Int          @id @default(autoincrement())
+//   title  String
+//   tags   TagOnPosts[]
+//   User   User?        @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+//   userId Int?
+// }
